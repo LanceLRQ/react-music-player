@@ -915,6 +915,7 @@ export default class ReactJkMusicPlayer extends PureComponent {
   clearAudioLists = () => {
     this.props.onAudioListsChange && this.props.onAudioListsChange('', [], {})
     this.resetAudioStatus()
+    this.props.onAudioListsDelete('fully', null)
   }
 
   onDeleteAudioLists = (audioId) => (e) => {
@@ -929,6 +930,9 @@ export default class ReactJkMusicPlayer extends PureComponent {
       this.clearAudioLists()
       return
     }
+    const pendingDeleteItem = audioLists.find(
+      (audio) => audio[PLAYER_KEY] === audioId,
+    )
     const newAudioLists = [...audioLists].filter(
       (audio) => audio[PLAYER_KEY] !== audioId,
     )
@@ -957,6 +961,12 @@ export default class ReactJkMusicPlayer extends PureComponent {
         playId,
         newAudioLists,
         this.getBaseAudioInfo(),
+      )
+
+    this.props.onAudioListsDelete &&
+      this.props.onAudioListsDelete(
+        'single',
+        pendingDeleteItem ? pendingDeleteItem.key : '',
       )
   }
 
@@ -2037,14 +2047,19 @@ export default class ReactJkMusicPlayer extends PureComponent {
   }
 
   updateAudioLists = (audioLists) => {
+    const keyMaps = {}
+    audioLists.forEach((item) => {
+      keyMaps[item.key] = true
+    })
     const newAudioLists = [
-      ...this.state.audioLists,
-      ...audioLists.filter(
-        (audio) =>
-          this.state.audioLists.findIndex(
-            (v) => v.musicSrc === audio.musicSrc,
-          ) === -1,
-      ),
+      ...this.state.audioLists.filter((audio) => {
+        // 先扫描原有的，不动
+        const flag = keyMaps[audio.key]
+        keyMaps[audio.key] = false
+        return flag
+      }),
+      // 再放入新增的
+      ...audioLists.filter((audio) => keyMaps[audio.key]),
     ]
     this.initPlayInfo(newAudioLists)
     this.bindEvents(this.audio)

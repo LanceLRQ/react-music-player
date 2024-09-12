@@ -62,6 +62,7 @@ export default {
   onAudioListsChange: PropTypes.func,
   onPlayModeChange: PropTypes.func,
   onModeChange: PropTypes.func,
+  onAudioListsDelete: PropTypes.func,
   onAudioListsPanelChange: PropTypes.func,
   onAudioPlayTrackChange: PropTypes.func,
   onAudioListsSortEnd: PropTypes.func,

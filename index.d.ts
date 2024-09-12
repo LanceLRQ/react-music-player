@@ -168,6 +168,7 @@ export interface ReactJkMusicPlayerProps {
   ) => void
   onPlayModeChange?: (playMode: ReactJkMusicPlayerPlayMode) => void
   onModeChange?: (mode: ReactJkMusicPlayerMode) => void
+  onAudioListsDelete?: (deleteMode: string, audioKey: any) => void
   onAudioListsPanelChange?: (panelVisible: boolean) => void
   onAudioPlayTrackChange?: (
     currentPlayId: string,
